@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at 20% 20%, #0f3d2e, #06251c 70%);
+  color: white;
+  min-height: 100vh;
+}
+
+.card-dark {
+  background: rgba(213, 209, 209, 0.811);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.nav-link {
+  text-decoration: none;
+}
+
+.progress {
+  height: 20px;
+}
+#dash{
+  color: black;
+}
