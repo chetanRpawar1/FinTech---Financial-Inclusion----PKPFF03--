@@ -36,6 +36,7 @@ import BudgetLearning from "./pages/BudgetLearning";
 import SavingLearning from "./pages/SavingLearning";
 import InvestingLearning from "./pages/InvestingLearning";
 import CreditLearning from "./pages/CreditLearning";
+import Progress from "./pages/Progress";
 
 export default function App() {
   return (
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/progress" element={<Progress />} />
         <Route path="/learn" element={<Learn />} />
         <Route path="/learn/budget" element={<BudgetLearning />} />
         <Route path="/learn/saving" element={<SavingLearning />} />

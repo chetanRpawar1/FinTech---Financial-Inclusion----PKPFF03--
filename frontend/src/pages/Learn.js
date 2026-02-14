@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import LearningNav from "../components/LearningNav";
+import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import creditImg from "../assets/credit_card.png";
 import budgetImg from "../assets/budget.png";
@@ -102,6 +103,7 @@ export default function Learn() {
           ))}
         </div>
       </div>
+      <Footer />
     </>
   );
 }

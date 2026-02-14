@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import LearningNav from "../components/LearningNav";
+import Footer from "../components/Footer";
 import api from "../api";
 
 export default function CreditLearning() {
@@ -49,7 +50,7 @@ export default function CreditLearning() {
     return (
         <>
             <Navbar />
-            <div className="container mt-4" style={{ color: "white", fontFamily: "Verdana, sans-serif" }}>
+            <div className="container mt-4" style={{ color: "white" }}>
                 <LearningNav />
                 <h2 className="fw-bold">Understanding Credit</h2>
                 <p className="lead fw-bold">
@@ -137,6 +138,7 @@ export default function CreditLearning() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

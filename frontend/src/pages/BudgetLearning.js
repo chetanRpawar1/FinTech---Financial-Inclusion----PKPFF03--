@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import LearningNav from "../components/LearningNav";
+import Footer from "../components/Footer";
 import api from "../api";
 
 export default function BudgetLearning() {
@@ -126,6 +127,7 @@ export default function BudgetLearning() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import api from "../api";
 
 export default function Dashboard() {
@@ -139,31 +140,57 @@ export default function Dashboard() {
 
         <div className="row flex-grow-1 g-3 no-scrollbar overflow-hidden">
 
-          {/* Column 1: Wallet Activity (History) */}
-          <div className="col-lg-3 d-flex flex-column h-100">
-            <div className="glass-panel flex-grow-1 d-flex flex-column overflow-hidden">
+          {/* Column 1: Goals & Boundaries (Settings) */}
+          <div className="col-lg-4 d-flex flex-column h-100">
+            <div className="glass-panel h-100">
               <h6 className="fw-bold text-white mb-3 d-flex align-items-center">
-                <span className="me-2">📜</span> History
+                <span className="me-2">⚙️</span> Configuration
               </h6>
-              <div className="flex-grow-1 overflow-auto no-scrollbar pe-1">
-                {Object.entries(history).length === 0 ? (
-                  <div className="text-center opacity-30 mt-5 compact-text">Empty vault</div>
-                ) : (
-                  Object.entries(history).sort().reverse().map(([date, items]) => (
-                    <div key={date} className="mb-3 timeline-item">
-                      <div className="d-flex justify-content-between align-items-center mb-1">
-                        <span className="fw-bold text-white" style={{ fontSize: '0.75rem' }}>{date}</span>
-                        <button className="btn btn-link text-danger p-0 compact-text" onClick={() => deleteDate(date)} style={{ fontSize: '0.7rem', textDecoration: 'none' }}>Remove</button>
-                      </div>
-                      {items.map((item, idx) => (
-                        <div key={idx} className="d-flex justify-content-between compact-text py-1 border-bottom border-white border-opacity-10">
-                          <span className="text-light opacity-75">{item.note}</span>
-                          <span className="text-white">₹{item.amount}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ))
-                )}
+
+              <div className="mb-4">
+                <label className="text-light opacity-50 compact-text d-block mb-2">Monthly Budget Limit</label>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text bg-transparent text-white border-secondary">₹</span>
+                  <input
+                    type="number"
+                    className="form-control bg-transparent text-white border-secondary"
+                    placeholder={monthlyTarget}
+                    value={monthlyInput}
+                    style={{ color: "white" }}
+                    onChange={(e) => setMonthlyInput(e.target.value)}
+                    onBlur={() => { if (monthlyInput) { setMonthlyTarget(Number(monthlyInput)); syncBudget(Number(monthlyInput)); setMonthlyInput(""); } }}
+                  />
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="text-light opacity-50 compact-text d-block mb-2">Credit Boundary</label>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text bg-transparent text-white border-secondary">₹</span>
+                  <input
+                    type="number"
+                    className="form-control bg-transparent text-white border-secondary"
+                    placeholder={totalDebt}
+                    onChange={(e) => syncDebt(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="row g-2 mb-4">
+                <div className="col-6">
+                  <label className="text-light opacity-50 compact-text d-block mb-1">Start Period</label>
+                  <input type="date" className="form-control form-control-sm bg-dark text-white border-secondary" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                </div>
+                <div className="col-6">
+                  <label className="text-light opacity-50 compact-text d-block mb-1">End Period</label>
+                  <input type="date" className="form-control form-control-sm bg-dark text-white border-secondary" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="mt-auto p-3 rounded bg-white bg-opacity-5 border border-white border-opacity-10">
+                <p className="compact-text text-light opacity-75 mb-0">
+                  <span className="text-success me-1">💡</span> <span className="text-white opacity-75">Tip: Fixed monthly targets help build discipline. Your daily limit updates automatically based on remaining time.</span>
+                </p>
               </div>
             </div>
           </div>
@@ -228,65 +255,38 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Column 3: Goals & Boundaries (Settings) */}
-          <div className="col-lg-4 d-flex flex-column h-100">
-            <div className="glass-panel h-100">
+          {/* Column 3: Wallet Activity (History) */}
+          <div className="col-lg-3 d-flex flex-column h-100">
+            <div className="glass-panel flex-grow-1 d-flex flex-column overflow-hidden">
               <h6 className="fw-bold text-white mb-3 d-flex align-items-center">
-                <span className="me-2">⚙️</span> Configuration
+                <span className="me-2">📜</span> History
               </h6>
-
-              <div className="mb-4">
-                <label className="text-light opacity-50 compact-text d-block mb-2">Monthly Budget Limit</label>
-                <div className="input-group input-group-sm">
-                  <span className="input-group-text bg-transparent text-white border-secondary">₹</span>
-                  <input
-                    type="number"
-                    className="form-control bg-transparent text-white border-secondary"
-                    placeholder={monthlyTarget}
-                    value={monthlyInput}
-                    style={{ color: "white" }}
-                    onChange={(e) => setMonthlyInput(e.target.value)}
-                    onBlur={() => { if (monthlyInput) { setMonthlyTarget(Number(monthlyInput)); syncBudget(Number(monthlyInput)); setMonthlyInput(""); } }}
-                  />
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <label className="text-light opacity-50 compact-text d-block mb-2">Credit Boundary</label>
-                <div className="input-group input-group-sm">
-                  <span className="input-group-text bg-transparent text-white border-secondary">₹</span>
-                  <input
-                    type="number"
-                    className="form-control bg-transparent text-white border-secondary"
-                    placeholder={totalDebt}
-                    onChange={(e) => syncDebt(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="row g-2 mb-4">
-                <div className="col-6">
-                  <label className="text-light opacity-50 compact-text d-block mb-1">Start Period</label>
-                  <input type="date" className="form-control form-control-sm bg-dark text-white border-secondary" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                </div>
-                <div className="col-6">
-                  <label className="text-light opacity-50 compact-text d-block mb-1">End Period</label>
-                  <input type="date" className="form-control form-control-sm bg-dark text-white border-secondary" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                </div>
-              </div>
-
-              <div className="mt-auto p-3 rounded bg-white bg-opacity-5 border border-white border-opacity-10">
-                <p className="compact-text text-light opacity-75 mb-0">
-                  <span className="text-success me-1">💡</span> <div style={{ color: "#070808ff" }}>Tip: Fixed monthly targets help build discipline. Your daily limit updates automatically based on remaining time.
-
-                  </div>
-                </p>
+              <div className="flex-grow-1 overflow-auto no-scrollbar pe-1">
+                {Object.entries(history).length === 0 ? (
+                  <div className="text-center opacity-30 mt-5 compact-text">Empty vault</div>
+                ) : (
+                  Object.entries(history).sort().reverse().map(([date, items]) => (
+                    <div key={date} className="mb-3 timeline-item">
+                      <div className="d-flex justify-content-between align-items-center mb-1">
+                        <span className="fw-bold text-white" style={{ fontSize: '0.75rem' }}>{date}</span>
+                        <button className="btn btn-link text-danger p-0 compact-text" onClick={() => deleteDate(date)} style={{ fontSize: '0.7rem', textDecoration: 'none' }}>Remove</button>
+                      </div>
+                      {items.map((item, idx) => (
+                        <div key={idx} className="d-flex justify-content-between compact-text py-1 border-bottom border-white border-opacity-10">
+                          <span className="text-light opacity-75">{item.note}</span>
+                          <span className="text-white">₹{item.amount}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
 
         </div>
       </div>
+      <Footer />
     </>
   );
 }

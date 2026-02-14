@@ -64,6 +64,14 @@ body {
   width: 100%;
 }
 
+.nav-link-active {
+  color: #00e676 !important;
+}
+
+.nav-link-active::after {
+  width: 100% !important;
+}
+
 .btn-hover-grow {
   transition: all 0.3s ease !important;
 }
@@ -195,4 +203,216 @@ body {
   filter: brightness(1.2) contrast(1.1);
   box-shadow: 0 0 80px rgba(0, 230, 118, 0.6) !important;
   transform: scale(1.12) !important;
+}
+
+/* --- Home Page Portal Layout (Perfected & Synchronized) --- */
+.home-orbit-container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto 120px auto;
+  animation: float-home 8s ease-in-out infinite;
+  /* Centering synchronized here */
+}
+
+.orbit-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  animation: revolve-orbit 35s linear infinite;
+  z-index: 1;
+}
+
+.home-orbit-container:hover .orbit-track,
+.home-orbit-container:hover .orbit-item {
+  animation-play-state: paused;
+}
+
+.home-hero-circle-v2 {
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(0, 230, 118, 0.3);
+  box-shadow: 0 0 60px rgba(0, 230, 118, 0.4);
+  z-index: 2;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Hero stays static relative to container, so it stays centered with orbit */
+}
+
+.home-hero-circle-v2:hover {
+  box-shadow: 0 0 100px rgba(0, 230, 118, 0.7);
+  border-color: #00e676;
+}
+
+.orbit-item {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 700;
+  font-size: 1rem;
+  z-index: 3;
+  padding: 15px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: counter-revolve 35s linear infinite;
+}
+
+.orbit-item:hover {
+  background: rgba(0, 230, 118, 0.15);
+  border-color: #00e676;
+  color: #00e676 !important;
+  transform: translate(-50%, -50%) scale(1.15) !important;
+  box-shadow: 0 0 40px rgba(0, 230, 118, 0.3);
+}
+
+.orbit-item i {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: #00e676;
+}
+
+/* Mathematically Equal Orbital Spacing (60 Degrees) */
+.pos-1 {
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pos-2 {
+  top: 25%;
+  left: 93.3%;
+  transform: translate(-50%, -50%);
+}
+
+.pos-3 {
+  top: 75%;
+  left: 93.3%;
+  transform: translate(-50%, -50%);
+}
+
+.pos-4 {
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pos-5 {
+  top: 75%;
+  left: 6.7%;
+  transform: translate(-50%, -50%);
+}
+
+.pos-6 {
+  top: 25%;
+  left: 6.7%;
+  transform: translate(-50%, -50%);
+}
+
+.launch-btn-container {
+  margin-top: 0px;
+  margin-bottom: 80px;
+  z-index: 10;
+  position: relative;
+}
+
+@keyframes revolve-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes counter-revolve {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes float-home {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1.03);
+  }
+
+  50% {
+    transform: translateY(-30px) scale(0.97);
+  }
+}
+
+/* Adaptive Breakpoints */
+@media (max-width: 991px) {
+  .home-orbit-container {
+    width: 450px;
+    height: 450px;
+    margin: 0 auto 100px auto;
+  }
+
+  .home-hero-circle-v2 {
+    width: 300px;
+    height: 300px;
+  }
+
+  .orbit-item {
+    width: 110px;
+    height: 110px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-orbit-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    height: auto;
+    border: none;
+    animation: none;
+  }
+
+  .orbit-track {
+    display: none;
+  }
+
+  .orbit-item {
+    position: static;
+    width: 100%;
+    height: 120px;
+    animation: none !important;
+    border-radius: 20px;
+  }
+
+  .home-hero-circle-v2 {
+    display: none;
+  }
+
+  .launch-btn-container {
+    margin-top: 20px;
+  }
 }
