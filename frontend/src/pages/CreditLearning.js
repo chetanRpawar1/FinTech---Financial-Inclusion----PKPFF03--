@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import LearningNav from "../components/LearningNav";
+import api from "../api";
 
 export default function CreditLearning() {
     const [credits, setCredits] = useState([
@@ -8,20 +10,25 @@ export default function CreditLearning() {
     ]);
 
     useEffect(() => {
-        // Load credits from local storage if available
-        const savedCredits = localStorage.getItem("userCredits");
-        if (savedCredits) {
-            setCredits(JSON.parse(savedCredits));
-        }
+        const fetchUserData = async () => {
+            try {
+                const res = await api.get("/finance/data");
+                if (res.data.totalDebt) {
+                    // Split the total debt back into dummy objects if no specific list exists
+                    // Or ideally we would have a 'debts' array in user model. 
+                    // For now, let's just show it in the UI and sync updates.
+                }
+            } catch (err) {
+                console.error("Failed to fetch user data:", err);
+            }
+        };
+        fetchUserData();
     }, []);
 
     useEffect(() => {
-        // Save credits to local storage whenever they change
-        localStorage.setItem("userCredits", JSON.stringify(credits));
-
-        // Also save total credit calculation for other pages
         const total = credits.reduce((sum, item) => sum + Number(item.amount), 0);
-        localStorage.setItem("userTotalCredit", total);
+        api.post("/finance/sync", { totalDebt: total })
+            .catch(err => console.error("Failed to sync debt:", err));
     }, [credits]);
 
     const handleCreditChange = (id, field, value) => {
@@ -43,6 +50,7 @@ export default function CreditLearning() {
         <>
             <Navbar />
             <div className="container mt-4" style={{ color: "white", fontFamily: "Verdana, sans-serif" }}>
+                <LearningNav />
                 <h2 className="fw-bold">Understanding Credit</h2>
                 <p className="lead fw-bold">
                     Credit is a powerful tool if used wisely. It allows you to borrow money now and pay it back later.

@@ -1,19 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import LearningNav from "../components/LearningNav";
+import api from "../api";
 
 export default function BudgetLearning() {
     const [income, setIncome] = useState("");
+    const [totalCredit, setTotalCredit] = useState(0);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const res = await api.get("/finance/data");
+                setTotalCredit(res.data.totalDebt || 0);
+            } catch (err) {
+                console.error("Failed to fetch user data:", err);
+            }
+        };
+        fetchUserData();
+    }, []);
 
     const needs = income * 0.5;
     const wants = income * 0.3;
     const savings = income * 0.2;
 
-    const totalCredit = localStorage.getItem("userTotalCredit") || 0;
-
     return (
         <>
             <Navbar />
             <div className="container mt-4" style={{ color: "white" }}>
+                <LearningNav />
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h2>How to Set a Budget</h2>
                     {Number(totalCredit) > 0 && (

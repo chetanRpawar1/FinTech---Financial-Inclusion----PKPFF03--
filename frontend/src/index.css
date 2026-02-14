@@ -38,6 +38,109 @@ body {
 
 .nav-link {
   text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-link-hover {
+  position: relative;
+}
+
+.nav-link-hover:hover {
+  color: #00e676 !important;
+}
+
+.nav-link-hover::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #00e676;
+  transition: width 0.3s ease;
+}
+
+.nav-link-hover:hover::after {
+  width: 100%;
+}
+
+.btn-hover-grow {
+  transition: all 0.3s ease !important;
+}
+
+.btn-hover-grow:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(0, 230, 118, 0.4) !important;
+  filter: brightness(1.1);
+}
+
+.btn-hover-outline {
+  transition: all 0.3s ease !important;
+}
+
+.btn-hover-outline:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: #00e676 !important;
+  color: #00e676 !important;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.compact-text {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.timeline-item {
+  border-left: 2px solid rgba(0, 230, 118, 0.3);
+  padding-left: 12px;
+  position: relative;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 8px;
+  width: 10px;
+  height: 10px;
+  background: #00e676;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00e676;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #fff 0%, #00e676 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .form-control {
@@ -45,6 +148,15 @@ body {
   border: none;
   border-radius: 10px;
   padding: 10px 15px;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+::placeholder {
+  color: white !important;
+  opacity: 0.7;
 }
 
 .btn {
@@ -72,4 +184,15 @@ body {
 .saved-negative {
   color: #ff5252;
   font-weight: bold;
+}
+
+.brightness-hover {
+  transition: all 0.4s ease-in-out !important;
+  cursor: pointer;
+}
+
+.brightness-hover:hover {
+  filter: brightness(1.2) contrast(1.1);
+  box-shadow: 0 0 80px rgba(0, 230, 118, 0.6) !important;
+  transform: scale(1.12) !important;
 }

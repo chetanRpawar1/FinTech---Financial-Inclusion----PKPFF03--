@@ -1,14 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import LearningNav from "../components/LearningNav";
+import api from "../api";
 
 export default function SavingLearning() {
     const [income, setIncome] = useState("");
+    const [totalCredit, setTotalCredit] = useState(0);
     const [expenses, setExpenses] = useState([
         { id: 1, name: "Rent / Housing", amount: "" },
         { id: 2, name: "Food / Groceries", amount: "" },
         { id: 3, name: "Transport", amount: "" },
         { id: 4, name: "Wants / Others", amount: "" },
     ]);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const res = await api.get("/finance/data");
+                setTotalCredit(res.data.totalDebt || 0);
+            } catch (err) {
+                console.error("Failed to fetch user data:", err);
+            }
+        };
+        fetchUserData();
+    }, []);
 
     const handleExpenseChange = (id, field, value) => {
         setExpenses(expenses.map(exp => exp.id === id ? { ...exp, [field]: value } : exp));
@@ -27,17 +42,19 @@ export default function SavingLearning() {
     const potentialSavings = Number(income) - totalExpenses;
     const savingsRate = Number(income) > 0 ? (potentialSavings / Number(income)) * 100 : 0;
 
-    // Save to local storage for Investing module
-    if (potentialSavings > 0) {
-        localStorage.setItem("userSavings", potentialSavings);
-    }
-
-    const totalCredit = localStorage.getItem("userTotalCredit") || 0;
+    // Sync to backend for Investing module
+    useEffect(() => {
+        if (potentialSavings > 0) {
+            api.post("/finance/sync", { savings: potentialSavings })
+                .catch(err => console.error("Failed to sync savings:", err));
+        }
+    }, [potentialSavings]);
 
     return (
         <>
             <Navbar />
             <div className="container mt-4" style={{ color: "white", fontFamily: "Verdana, sans-serif" }}>
+                <LearningNav />
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h2 className="fw-bold">The Power of Saving</h2>
                     {Number(totalCredit) > 0 && (
@@ -73,36 +90,36 @@ export default function SavingLearning() {
                     </div>
 
                     <div className="col-md-6">
-                        <div className="card-dark p-4">
-                            <h5 className="fw-bold mb-3">Smart Savings Analyzer</h5>
-                            <p className="small fw-bold" style={{ opacity: 0.8 }}>
-                                Enter your monthly details to see your savings potential.
+                        <div className="card-dark p-3">
+                            <h6 className="fw-bold mb-2">Smart Savings Analyzer</h6>
+                            <p className="compact-text fw-bold mb-3" style={{ opacity: 0.8, fontSize: "0.75rem" }}>
+                                Enter your monthly details below.
                             </p>
 
-                            <div className="mb-3">
-                                <label className="form-label small fw-bold">Monthly Income</label>
+                            <div className="mb-2">
+                                <label className="form-label compact-text fw-bold mb-1" style={{ fontSize: "0.75rem" }}>Monthly Income</label>
                                 <input
                                     type="number"
-                                    className="form-control fw-bold"
+                                    className="form-control form-control-sm fw-bold"
                                     value={income}
                                     onChange={(e) => setIncome(e.target.value)}
                                     placeholder="0"
-                                    style={{ background: "rgba(255, 255, 255, 0.9)", border: "none" }}
+                                    style={{ background: "rgba(255, 255, 255, 0.9)", border: "none", fontSize: "0.85rem" }}
                                 />
                             </div>
 
-                            <label className="form-label small fw-bold">Expenses</label>
-                            <div className="mb-3" style={{ maxHeight: "300px", overflowY: "auto", paddingRight: "5px" }}>
+                            <label className="form-label compact-text fw-bold mb-1" style={{ fontSize: "0.75rem" }}>Expenses</label>
+                            <div className="mb-2">
                                 {expenses.map((exp) => (
-                                    <div key={exp.id} className="row g-2 mb-2 align-items-center">
+                                    <div key={exp.id} className="row g-1 mb-1 align-items-center">
                                         <div className="col-7">
                                             <input
                                                 type="text"
                                                 className="form-control form-control-sm fw-bold"
                                                 value={exp.name}
                                                 onChange={(e) => handleExpenseChange(exp.id, "name", e.target.value)}
-                                                placeholder="Expense Name"
-                                                style={{ background: "rgba(255, 255, 255, 0.9)", border: "none" }}
+                                                placeholder="Name"
+                                                style={{ background: "rgba(255, 255, 255, 0.9)", border: "none", fontSize: "0.8rem", padding: "4px 8px" }}
                                             />
                                         </div>
                                         <div className="col-4">
@@ -112,49 +129,49 @@ export default function SavingLearning() {
                                                 value={exp.amount}
                                                 onChange={(e) => handleExpenseChange(exp.id, "amount", e.target.value)}
                                                 placeholder="0"
-                                                style={{ background: "rgba(255, 255, 255, 0.9)", border: "none" }}
+                                                style={{ background: "rgba(255, 255, 255, 0.9)", border: "none", fontSize: "0.8rem", padding: "4px 8px" }}
                                             />
                                         </div>
-                                        <div className="col-1">
-                                            <button className="btn btn-sm btn-outline-danger fw-bold" onClick={() => removeExpense(exp.id)}>×</button>
+                                        <div className="col-1 text-end">
+                                            <button className="btn btn-sm p-0 border-0 text-danger fw-bold" onClick={() => removeExpense(exp.id)} style={{ fontSize: "1.2rem", lineRound: "1" }}>×</button>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <button className="btn btn-sm btn-light w-100 mb-3 fw-bold" onClick={addExpense}>+ Add Expense</button>
+                            <button className="btn btn-sm btn-light w-100 mb-2 fw-bold" style={{ fontSize: "0.75rem", padding: "4px" }} onClick={addExpense}>+ Add Expense</button>
 
-                            <hr className="my-3" />
+                            <hr className="my-2 opacity-25" />
 
                             {Number(income) > 0 && (
                                 <div>
-                                    <div className="d-flex justify-content-between mb-1 fw-bold">
+                                    <div className="d-flex justify-content-between mb-1 compact-text fw-bold">
                                         <span>Total Expenses:</span>
-                                        <strong>Rs.{totalExpenses}</strong>
+                                        <span>Rs.{totalExpenses}</span>
                                     </div>
-                                    <div className="d-flex justify-content-between mb-3 fw-bold">
+                                    <div className="d-flex justify-content-between mb-2 compact-text fw-bold">
                                         <span>Potential Savings:</span>
-                                        <strong style={{ color: potentialSavings > 0 ? "#595153ff" : "#ff6b6b", fontSize: "1.2rem" }}>
+                                        <strong style={{ color: potentialSavings > 0 ? "#00e676" : "#ff6b6b", fontSize: "1rem" }}>
                                             Rs.{potentialSavings}
                                         </strong>
                                     </div>
 
-                                    <div className="progress mb-2" style={{ height: "10px", backgroundColor: "rgba(255,255,255,0.2)" }}>
+                                    <div className="progress mb-1" style={{ height: "6px", backgroundColor: "rgba(255,255,255,0.2)" }}>
                                         <div
                                             className="progress-bar"
                                             role="progressbar"
-                                            style={{ width: `${Math.max(0, Math.min(100, savingsRate))}%`, backgroundColor: savingsRate >= 20 ? "#a23724ff" : "#ffc107" }}
+                                            style={{ width: `${Math.max(0, Math.min(100, savingsRate))}%`, backgroundColor: savingsRate >= 20 ? "#00e676" : "#ffc107" }}
                                         ></div>
                                     </div>
-                                    <p className="text-center small mb-3 fw-bold">
-                                        You are saving <strong>{savingsRate.toFixed(1)}%</strong> of your income.
-                                        {savingsRate >= 20 ? " Great job! 🚀" : " Try to reduce expenses to save more."}
+                                    <p className="text-center mb-2 fw-bold" style={{ fontSize: "0.7rem" }}>
+                                        Saving <strong>{savingsRate.toFixed(1)}%</strong>
+                                        {savingsRate >= 20 ? " 🚀" : " ⚠️"}
                                     </p>
 
                                     {potentialSavings > 0 && (
                                         <div className="text-center">
-                                            <a href="/learn/investing" className="btn btn-primary fw-bold w-100">
-                                                See how to grow this Rs.{potentialSavings} 📈
+                                            <a href="/learn/investing" className="btn btn-sm btn-primary fw-bold w-100" style={{ fontSize: "0.75rem" }}>
+                                                Grow this Rs.{potentialSavings} 📈
                                             </a>
                                         </div>
                                     )}

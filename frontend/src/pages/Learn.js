@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import LearningNav from "../components/LearningNav";
 import { Link } from "react-router-dom";
 import creditImg from "../assets/credit_card.png";
 import budgetImg from "../assets/budget.png";
@@ -51,6 +52,7 @@ export default function Learn() {
     <>
       <Navbar />
       <div className="container mt-5">
+        <LearningNav />
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="fw-bold text-white">Learning Modules</h2>
           {Number(totalCredit) > 0 && (

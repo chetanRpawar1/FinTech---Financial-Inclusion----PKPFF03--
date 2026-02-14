@@ -1,17 +1,28 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import LearningNav from "../components/LearningNav";
 import { Link } from "react-router-dom";
+import api from "../api";
 
 export default function InvestingLearning() {
     const [monthlyInvestment, setMonthlyInvestment] = useState("");
     const [annualReturn, setAnnualReturn] = useState(12);
     const [years, setYears] = useState(10);
+    const [totalCredit, setTotalCredit] = useState(0);
 
     useEffect(() => {
-        const savedAmount = localStorage.getItem("userSavings");
-        if (savedAmount) {
-            setMonthlyInvestment(savedAmount);
-        }
+        const fetchUserData = async () => {
+            try {
+                const res = await api.get("/finance/data");
+                setTotalCredit(res.data.totalDebt || 0);
+                if (res.data.savings) {
+                    setMonthlyInvestment(res.data.savings);
+                }
+            } catch (err) {
+                console.error("Failed to fetch user data:", err);
+            }
+        };
+        fetchUserData();
     }, []);
 
     const calculateGrowth = () => {
@@ -33,12 +44,12 @@ export default function InvestingLearning() {
     };
 
     const result = calculateGrowth();
-    const totalCredit = localStorage.getItem("userTotalCredit") || 0;
 
     return (
         <>
             <Navbar />
             <div className="container mt-4" style={{ color: "white", fontFamily: "Verdana, sans-serif" }}>
+                <LearningNav />
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h2 className="fw-bold">Grow Your Wealth</h2>
                     {Number(totalCredit) > 0 && (
