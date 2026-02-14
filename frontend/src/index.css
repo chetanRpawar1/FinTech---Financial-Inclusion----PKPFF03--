@@ -279,7 +279,7 @@ body {
   background: rgba(0, 230, 118, 0.15);
   border-color: #00e676;
   color: #00e676 !important;
-  transform: translate(-50%, -50%) scale(1.15) !important;
+  scale: 1.15;
   box-shadow: 0 0 40px rgba(0, 230, 118, 0.3);
 }
 
@@ -327,6 +327,7 @@ body {
 }
 
 .launch-btn-container {
+
   margin-top: 0px;
   margin-bottom: 80px;
   z-index: 10;

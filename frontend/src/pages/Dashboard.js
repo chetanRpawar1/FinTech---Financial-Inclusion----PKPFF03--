@@ -120,6 +120,9 @@ export default function Dashboard() {
   const dailyBalance = smartDailyLimit - spent;
   const monthlyRemaining = remainingMoney;
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userName = user.username || "Investor";
+
   return (
     <>
       <Navbar />
@@ -128,8 +131,8 @@ export default function Dashboard() {
         {/* Header Summary */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div>
-            <h4 className="fw-bold mb-0 text-white">Financial Dashboard</h4>
-            <p className="text-light opacity-50 mb-0 compact-text">Overview for {currentMonth}</p>
+            <h4 className="fw-bold mb-0 text-white">Hello, {userName}!</h4>
+            <p className="text-light opacity-50 mb-0 compact-text">Your Financial Dashboard for {currentMonth}</p>
           </div>
           <div className="d-flex gap-3 align-items-center">
             <span className="badge border border-secondary text-light px-3 py-2 rounded-pill compact-text">
