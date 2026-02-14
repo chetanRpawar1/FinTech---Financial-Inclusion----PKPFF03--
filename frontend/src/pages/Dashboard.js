@@ -90,186 +90,163 @@ export default function Dashboard() {
     <>
       <Navbar />
 
-      <div style={{ display: "flex", justifyContent: "center", padding: "40px 30px" }}>
-        <div style={{ width: "720px", maxWidth: "100%" }}>
+      <div className="container-fluid py-3" style={{ height: "calc(100vh - 70px)", overflow: "hidden" }}>
+        <div className="row h-100 g-4">
 
-          <div className="card-dark mb-4 position-relative">
+          {/* LEFT COLUMN: History (Reduced Width) */}
+          <div className="col-lg-4 h-100">
+            <div className="card-dark h-100 d-flex flex-column">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="fw-bold mb-0 text-white">History</h5>
+                <input type="text" placeholder="Search..." className="form-control form-control-sm w-auto bg-white text-dark border-0" style={{ maxWidth: "150px" }} />
+              </div>
 
-            {/* METRICS BOX */}
-            <div
-              style={{
-                position: "absolute",
-                top: 12,
-                right: 12,
-                background: "rgba(255,255,255,0.08)",
-                borderRadius: 12,
-                padding: "10px 16px",
-                display: "flex",
-                gap: 30,
-                alignItems: "center",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.25)"
-              }}
-            >
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 20, fontWeight: 900 }}>
-                  ₹{smartDailyLimit}
+              <div className="flex-grow-1" style={{ overflowY: "auto", paddingRight: "5px" }}>
+                {Object.entries(history).length === 0 ? (
+                  <div className="text-center opacity-50 mt-5 text-white">No history available</div>
+                ) : (
+                  Object.entries(history).sort().reverse().map(([date, items]) => {
+                    const total = items.reduce((s, e) => s + e.amount, 0);
+                    const saveVal = smartDailyLimit - total;
+                    return (
+                      <div key={date} className="mb-3">
+                        <div className="d-flex justify-content-between align-items-end mb-1 px-1">
+                          <span className="badge bg-secondary opacity-75">{date}</span>
+                          <span className="small text-white opacity-75">Daily Balance: <span className="text-white fw-bold">{saveVal}</span></span>
+                        </div>
+                        <div className="expenses-group ps-2 border-start border-secondary border-opacity-25">
+                          {items.map((item, idx) => (
+                            <div key={idx} className="expense-item py-2 px-3 mb-1">
+                              <span className="text-white">{item.note}</span>
+                              <span className="fw-bold text-white">₹{item.amount}</span>
+                            </div>
+                          ))}
+                          <div className="d-flex justify-content-end mt-1">
+                            <button className="btn btn-sm text-danger py-0" onClick={() => deleteDate(date)} style={{ fontSize: "0.8rem" }}>Delete Day</button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Controls & Settings (Expanded) */}
+          <div className="col-lg-8 h-100 d-flex flex-column">
+
+            {/* Header & Settings */}
+            <div className="card-dark mb-3">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h4 className="fw-bold mb-0 text-white">Dashboard</h4>
+                <span className="badge bg-light text-dark">{selectedDate}</span>
+              </div>
+
+              {/* Global Settings Row */}
+              <div className="row g-2 mb-2">
+                <div className="col-6">
+                  <label className="text-white fw-bold d-block">Monthly Limit</label>
+                  <div className="input-group input-group-sm">
+                    <span className="input-group-text bg-transparent text-white border-secondary">₹</span>
+                    <input
+                      type="number"
+                      className="form-control bg-transparent text-white border-secondary"
+                      placeholder={monthlyTarget}
+                      value={monthlyInput}
+                      onChange={(e) => setMonthlyInput(e.target.value)}
+                      onBlur={() => { if (monthlyInput) { setMonthlyTarget(Number(monthlyInput)); setMonthlyInput(""); } }}
+                    />
+                  </div>
                 </div>
-                <div style={{ fontSize: 11, opacity: 0.8 }}>
-                  Allowed / day
+                <div className="col-6">
+                  <label className="text-white fw-bold d-block">Credit Limit</label>
+                  <div className="input-group input-group-sm">
+                    <span className="input-group-text bg-transparent text-white border-secondary">₹</span>
+                    <input
+                      type="number"
+                      className="form-control bg-transparent text-white border-secondary"
+                      placeholder={localStorage.getItem("userTotalCredit") || 0}
+                      onChange={(e) => {
+                        localStorage.setItem("userTotalCredit", e.target.value);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 20, fontWeight: 900 }}>
-                  ₹{monthlyRemaining}
+              <div className="row g-2">
+                <div className="col-6">
+                  <label className="text-white mb-1 d-block">Start Date</label>
+                  <input type="date" className="form-control form-control-sm" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                 </div>
-                <div style={{ fontSize: 11, opacity: 0.8 }}>
-                  Remaining
+                <div className="col-6">
+                  <label className="text-white mb-1 d-block">End Date</label>
+                  <input type="date" className="form-control form-control-sm" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                 </div>
               </div>
             </div>
 
-            <h4>Daily Challenge</h4>
+            {/* Quick Stats */}
+            <div className="row g-3 mb-3">
+              <div className="col-6">
+                <div className="metric-card p-3">
+                  <small className="text-uppercase opacity-75">Daily Limit</small>
+                  <h3 className="mb-0 fw-bold">₹{smartDailyLimit}</h3>
+                </div>
+              </div>
+              <div className="col-6">
+                <div className="metric-card secondary p-3">
+                  <small className="text-uppercase opacity-75">Remaining</small>
+                  <h3 className="mb-0 fw-bold">₹{monthlyRemaining}</h3>
+                </div>
+              </div>
+            </div>
 
-            {/* DATE */}
-            <div className="row mb-3">
-              <div className="col-9">
+            {/* Add Expense (Compact) */}
+            <div className="card-dark flex-grow-1">
+              <h5 className="fw-bold mb-3 text-white">Add Transaction</h5>
+              <div className="d-flex flex-column gap-2">
                 <input
                   type="date"
                   className="form-control"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
                 />
-              </div>
-            </div>
-
-            {/* SAVING PERIOD */}
-            <div className="row mb-3">
-              <div className="col-6">
-                <label className="form-label">Start</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              <div className="col-6">
-                <label className="form-label">End</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* MONTHLY TARGET */}
-            <div className="row mb-3">
-              <div className="col-9">
                 <input
                   className="form-control"
-                  type="number"
-                  placeholder="Set monthly target"
-                  value={monthlyInput}
-                  onChange={(e) => setMonthlyInput(e.target.value)}
-                />
-              </div>
-              <div className="col-3">
-                <button
-                  className="btn btn-info w-100"
-                  onClick={() => {
-                    if (monthlyInput) {
-                      setMonthlyTarget(Number(monthlyInput));
-                      setMonthlyInput("");
-                    }
-                  }}
-                >
-                  Set
-                </button>
-              </div>
-            </div>
-
-            {/* SUMMARY */}
-            <div className="summary">
-              <div><strong>Spent:</strong> ₹{spent}</div>
-              <div>
-                <strong>Balance:</strong>{" "}
-                <span className={dailyBalance >= 0 ? "saved-positive" : "saved-negative"}>
-                  ₹{dailyBalance}
-                </span>
-              </div>
-            </div>
-
-            {/* ADD */}
-            <div className="row mb-3">
-              <div className="col-6">
-                <input
-                  className="form-control"
-                  placeholder="Where spent"
+                  placeholder="Describe expense..."
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                 />
+                <div className="d-flex gap-2">
+                  <input
+                    className="form-control"
+                    type="number"
+                    placeholder="Amount (₹)"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                  <button className="btn btn-primary" onClick={addExpense} style={{ background: "#4facfe", border: "none" }}>
+                    Add
+                  </button>
+                </div>
               </div>
-              <div className="col-3">
-                <input
-                  className="form-control"
-                  type="number"
-                  placeholder="₹"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-              </div>
-              <div className="col-3">
-                <button className="btn btn-success w-100" onClick={addExpense}>
-                  Add
-                </button>
+
+              <div className="mt-4 p-3 rounded" style={{ background: "rgba(0,0,0,0.2)" }}>
+                <div className="d-flex justify-content-between">
+                  <span className="text-white">Spent Today:</span>
+                  <span className="fw-bold text-white">₹{spent}</span>
+                </div>
+                <div className="d-flex justify-content-between mt-1">
+                  <span className="text-white">Balance:</span>
+                  <span className="fw-bold text-white">
+                    {dailyBalance >= 0 ? "+" : ""}₹{dailyBalance}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <ul className="expense-list">
-              {expenses.map((e, i) => (
-                <li key={i}>{e.note} — ₹{e.amount}</li>
-              ))}
-            </ul>
-
-          </div>
-
-          {/* HISTORY */}
-          <div className="card-dark">
-            <h4>History</h4>
-
-            {Object.entries(history).map(([date, items]) => {
-              const total = items.reduce((s, e) => s + e.amount, 0);
-              const saveVal = smartDailyLimit - total;
-
-              return (
-                <div
-                  key={date}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1.2fr 1fr 1fr auto",
-                    alignItems: "center",
-                    gap: 10,
-                    padding: "6px 0",
-                    borderBottom: "1px solid rgba(255,255,255,0.15)"
-                  }}
-                >
-                  <span>{date}</span>
-                  <span>Spent ₹{total}</span>
-                  <span className={saveVal >= 0 ? "saved-positive" : "saved-negative"}>
-                    Balance ₹{saveVal}
-                  </span>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => deleteDate(date)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              );
-            })}
           </div>
 
         </div>

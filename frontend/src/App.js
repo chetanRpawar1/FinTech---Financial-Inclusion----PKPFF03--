@@ -26,20 +26,28 @@
 // export default function App() {
 //   return <h1>FinGrow App</h1>;
 // }
-import { BrowserRouter,Routes,Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Learn from "./pages/Learn";
+import BudgetLearning from "./pages/BudgetLearning";
+import SavingLearning from "./pages/SavingLearning";
+import InvestingLearning from "./pages/InvestingLearning";
+import CreditLearning from "./pages/CreditLearning";
 
-export default function App(){
-  return(
+export default function App() {
+  return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Signup/>}/>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/dashboard" element={<Dashboard/>}/>
-        <Route path="/learn" element={<Learn/>}/>
+        <Route path="/" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/learn" element={<Learn />} />
+        <Route path="/learn/budget" element={<BudgetLearning />} />
+        <Route path="/learn/saving" element={<SavingLearning />} />
+        <Route path="/learn/investing" element={<InvestingLearning />} />
+        <Route path="/learn/credit" element={<CreditLearning />} />
       </Routes>
     </BrowserRouter>
   );
