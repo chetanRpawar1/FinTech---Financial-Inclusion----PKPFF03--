@@ -18,9 +18,13 @@ router.get('/data', auth, async (req, res) => {
 router.post('/budget', auth, async (req, res) => {
     try {
         const { monthlyTarget, dailyLimit } = req.body;
+        const update = {};
+        if (monthlyTarget !== undefined) update["budget.monthlyTarget"] = monthlyTarget;
+        if (dailyLimit !== undefined) update["budget.dailyLimit"] = dailyLimit;
+
         const user = await User.findByIdAndUpdate(
             req.user.id,
-            { $set: { "budget.monthlyTarget": monthlyTarget, "budget.dailyLimit": dailyLimit } },
+            { $set: update },
             { new: true }
         );
         res.json(user.budget);
@@ -33,10 +37,10 @@ router.post('/budget', auth, async (req, res) => {
 // Add expense
 router.post('/expense', auth, async (req, res) => {
     try {
-        const { name, amount, category } = req.body;
+        const { name, amount, category, date } = req.body;
         const user = await User.findById(req.user.id);
 
-        user.expenses.unshift({ name, amount, category });
+        user.expenses.unshift({ name, amount, category, date: date || Date.now() });
         await user.save();
 
         res.json(user.expenses);

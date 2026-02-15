@@ -33,7 +33,7 @@ export default function Progress() {
                 const totalSpent = user.expenses.reduce((sum, e) => sum + e.amount, 0);
                 setStats({
                     totalSpent,
-                    budget: user.budget.monthlyTarget,
+                    budget: user.budget?.monthlyTarget !== undefined ? user.budget.monthlyTarget : 0,
                     savings: user.savings
                 });
             } catch (err) {

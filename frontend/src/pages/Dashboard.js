@@ -29,7 +29,7 @@ export default function Dashboard() {
         const res = await api.get("/finance/data");
         const user = res.data;
 
-        setMonthlyTarget(user.budget.monthlyTarget || 10000);
+        setMonthlyTarget(user.budget?.monthlyTarget !== undefined ? user.budget.monthlyTarget : 10000);
         setTotalDebt(user.totalDebt || 0);
 
         // Group expenses by date for the history view
@@ -161,7 +161,7 @@ export default function Dashboard() {
                     value={monthlyInput}
                     style={{ color: "white" }}
                     onChange={(e) => setMonthlyInput(e.target.value)}
-                    onBlur={() => { if (monthlyInput) { setMonthlyTarget(Number(monthlyInput)); syncBudget(Number(monthlyInput)); setMonthlyInput(""); } }}
+                    onBlur={() => { if (monthlyInput !== "") { const target = Number(monthlyInput); setMonthlyTarget(target); syncBudget(target); setMonthlyInput(""); } }}
                   />
                 </div>
               </div>
