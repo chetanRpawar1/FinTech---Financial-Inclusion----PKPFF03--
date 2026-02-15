@@ -24,8 +24,10 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      await api.post("/auth/signup", form);
-      nav("/login");
+      const res = await api.post("/auth/signup", form);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      nav("/");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed. Try again.");
     } finally {
